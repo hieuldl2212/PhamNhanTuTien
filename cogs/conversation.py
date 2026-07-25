@@ -16,7 +16,7 @@ class ConversationHandler(commands.Cog):
         self.bot = bot
         # Khởi tạo AsyncClient của Groq (không gây nghẽn event loop của discord.py)
         self.client = AsyncGroq(api_key=GROQ_API_KEY)
-        self.model_name = 'llama-3.3-70b-versatile'
+        self.model_name = 'llama-3.1-8b-instant'
         
     @commands.Cog.listener()
     async def on_message(self, message):
