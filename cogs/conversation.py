@@ -1,6 +1,8 @@
 """Cog xử lý hội thoại với AI"""
 import discord
 from discord.ext import commands
+from groq import AsyncGroq
+from config import GROQ_API_KEY
 import google.generativeai as genai
 from google import genai
 from config import GEMINI_API_KEY
@@ -8,17 +10,13 @@ from database import get_user_state, update_user_state
 from utils.personalities import PERSONALITIES, MOODS, get_sect_info, get_user_role_info
 
 class ConversationHandler(commands.Cog):
-    """Xử lý hội thoại với Gemini API"""
+    """Xử lý hội thoại với Groq API"""
     
-    # def __init__(self, bot):
-    #     self.bot = bot
-    #     genai.configure(api_key=GEMINI_API_KEY)
-    #     self.model = genai.GenerativeModel('gemini-2.5-flash')
     def __init__(self, bot):
         self.bot = bot
-        # Khởi tạo Client bằng SDK google-genai mới
-        self.client = genai.Client(api_key=GEMINI_API_KEY)
-        self.model_name = 'gemini-2.0-flash'
+        # Khởi tạo AsyncClient của Groq (không gây nghẽn event loop của discord.py)
+        self.client = AsyncGroq(api_key=GROQ_API_KEY)
+        self.model_name = 'llama-3.3-70b-versatile'
         
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -79,10 +77,14 @@ Quan trọng:
             user_content = message.content.replace(f'<@{self.bot.user.id}>', '').strip()
             prompt += f"{role_info['bot_address_to_user'].title()}: {user_content}\n{role_info['address_to_bot'].title()}:"
             
-            print(f"🤖 Đang gọi Gemini API...")
+            print(f"🤖 Đang gọi Groq API...")
             
-            response = self.client.models.generate_content(model=self.model_name, contents=prompt)
-            reply_text = response.text
+            # Thay thế lệnh gọi API Gemini bằng Groq Chat Completion chuẩn OpenAI
+            response = await self.client.chat.completions.create(
+                model=self.model_name,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            reply_text = response.choices[0].message.content
             
             print(f"✅ Nhận được phản hồi: {reply_text[:50]}...")
             
