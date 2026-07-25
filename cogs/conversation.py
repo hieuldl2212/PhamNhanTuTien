@@ -2,6 +2,7 @@
 import discord
 from discord.ext import commands
 import google.generativeai as genai
+from google import genai
 from config import GEMINI_API_KEY
 from database import get_user_state, update_user_state
 from utils.personalities import PERSONALITIES, MOODS, get_sect_info, get_user_role_info
@@ -9,11 +10,16 @@ from utils.personalities import PERSONALITIES, MOODS, get_sect_info, get_user_ro
 class ConversationHandler(commands.Cog):
     """Xử lý hội thoại với Gemini API"""
     
+    # def __init__(self, bot):
+    #     self.bot = bot
+    #     genai.configure(api_key=GEMINI_API_KEY)
+    #     self.model = genai.GenerativeModel('gemini-2.5-flash')
     def __init__(self, bot):
         self.bot = bot
-        genai.configure(api_key=GEMINI_API_KEY)
-        self.model = genai.GenerativeModel('gemini-2.5-flash')
-    
+        # Khởi tạo Client bằng SDK google-genai mới
+        self.client = genai.Client(api_key=GEMINI_API_KEY)
+        self.model_name = 'gemini-2.5-flash'
+        
     @commands.Cog.listener()
     async def on_message(self, message):
         """Lắng nghe và phản hồi tin nhắn"""
