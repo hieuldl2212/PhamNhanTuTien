@@ -81,7 +81,7 @@ Quan trọng:
             
             print(f"🤖 Đang gọi Gemini API...")
             
-            response = self.model.generate_content(prompt)
+            response = self.client.models.generate_content(model=self.model_name, contents=prompt)
             reply_text = response.text
             
             print(f"✅ Nhận được phản hồi: {reply_text[:50]}...")
