@@ -18,7 +18,7 @@ class ConversationHandler(commands.Cog):
         self.bot = bot
         # Khởi tạo Client bằng SDK google-genai mới
         self.client = genai.Client(api_key=GEMINI_API_KEY)
-        self.model_name = 'gemini-1.5-flash'
+        self.model_name = 'gemini-2.0-flash'
         
     @commands.Cog.listener()
     async def on_message(self, message):
