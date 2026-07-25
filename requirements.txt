@@ -1,4 +1,4 @@
 discord.py>=2.0.0
 google-generativeai>=0.3.0
 python-dotenv>=1.0.0
-pip install google-genai
+google-genai
